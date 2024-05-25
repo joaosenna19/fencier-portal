@@ -1,0 +1,74 @@
+// GridChart.module.scss
+
+.gridTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover {
+    background-color: #f2f2f2;
+  }
+
+  .deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: center; /* Centraliza o botão horizontalmente */
+    vertical-align: middle; /* Centraliza o botão verticalmente */
+  }
+
+  .trashIcon {
+    color: red;
+    font-size: 20px;
+    // GridChart.module.scss
+
+.gridTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover {
+    background-color: #f2f2f2;
+  }
+
+  .deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: center; /* Centraliza o botão horizontalmente */
+    vertical-align: middle; /* Centraliza o botão verticalmente */
+  }
+
+  .trashIcon {
+    color: red;
+    font-size: 20px;
+    vertical-align: middle; /* Centraliza o botão verticalmente */
+  }
+}
+
+  }
+}
