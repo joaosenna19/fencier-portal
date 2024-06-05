@@ -1,0 +1,32 @@
+[
+    
+    {
+      "id": 1,
+      "name": "Golden Fence",
+      "type": "Fence",
+      "price": "$99.99",
+      "image": "/placeholder.svg"
+    },
+    {
+      "id": 2,
+      "name": "Golden Gate",
+      "type": "Gate",
+      "price": "$79.99",
+      "image": "/placeholder.svg"
+    },
+    {
+      "id": 3,
+      "name": "Wood Fence",
+      "type": "Fence",
+      "price": "$14.99",
+      "image": "/placeholder.svg"
+    },
+    {
+      "id": 4,
+      "name": "Wood Gate",
+      "type": "Gate",
+      "price": "$49.99",
+      "image": "/placeholder.svg"
+    }
+  ]
+  
