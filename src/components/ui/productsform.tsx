@@ -1,110 +1,104 @@
-"use client";
-
-import { useEffect, useState } from "react";
+'use client'
+import { useState } from "react";
+import { useProducts } from "@/hooks/useProducts";
+import { deleteProduct, saveProduct, updateProduct } from "@/services/productServices";
 import { Button } from "@/components/ui/button";
-import { TrashIcon, PencilIcon } from "@/components/icons"; // Certifique-se de que o caminho esteja correto
-import { Product as ApiProduct } from "@/lib/types"; // Importando interfaces necessárias
-import Image from "next/image";
-
-interface Material {
-    id: string;
-    name: string;
-    styles: {
-        name: string;
-        colors: {
-            name: string;
-            heights: {
-                feet: number;
-                pricePer8Ft: number;
-                pricePer4Ft: number;
-                priceSingleGate: number;
-                priceDoubleGate: number;
-                gateFeet: number;
-            }[];
-        }[];
-    }[];
-}
+import { TrashIcon, PencilIcon } from "@/components/icons";
+import AddProductModal from "@/components/ui/AddProductModal";
 
 interface ProductItem {
     id: string;
-    name: string;
+    material: string;
+    style: string;
+    color: string;
     pricePer8Ft: number;
     pricePer4Ft: number;
     priceSingleGate: number;
     priceDoubleGate: number;
     gateFeet: number;
-    image: string;
 }
 
-export default function Productform() {
-    const [products, setProducts] = useState<ProductItem[]>([]);
-    const [loading, setLoading] = useState(true); // Estado de carregamento
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [newProduct, setNewProduct] = useState<ProductItem | null>(null);
-    const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Novo estado de carregamento para o formulário
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await fetch("https://fencier-api.onrender.com/material?tenantId=aa815619-4db7-4b79-a33f-9b51426db757");
-                const data: Material[] = await response.json();
-
-                const products = data.flatMap((material) =>
-                    material.styles.flatMap((style) =>
-                        style.colors.flatMap((color) =>
-                            color.heights.map((height) => ({
-                                id: `${material.id}-${style.name}-${color.name}-${height.feet}`,
-                                name: `${material.name} (${style.name} - ${color.name} - ${height.feet}ft)`,
-                                pricePer8Ft: height.pricePer8Ft,
-                                pricePer4Ft: height.pricePer4Ft,
-                                priceSingleGate: height.priceSingleGate,
-                                priceDoubleGate: height.priceDoubleGate,
-                                gateFeet: height.gateFeet,
-                                image: "",
-                            }))
-                        )
-                    )
-                );
-
-                setProducts(products);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            } finally {
-                setLoading(false); // Definir como falso após a conclusão do fetch
-            }
-        };
-
-        fetchProducts();
-    }, []);
-
-    const handleDelete = (id: string) => {
-        setProducts(products.filter((product) => product.id !== id));
-    };
+export default function ProductForm() {
+    const { products, materials, loading, setProducts } = useProducts();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemsPerPage = 10;
 
     const handleAddNewProduct = () => {
-        setIsEditing(true);
-        setNewProduct({
-            id: '',
-            name: '',
-            pricePer8Ft: 0,
-            pricePer4Ft: 0,
-            priceSingleGate: 0,
-            priceDoubleGate: 0,
-            gateFeet: 0,
-            image: '',
-        });
+        setShowModal(true);
     };
 
-    const preparePayload = (product: ProductItem) => {
-        return {
-            name: product.name,
-            styles: [
-                {
-                    name: 'Example Style', // Ajuste conforme necessário
-                    colors: [
+    const handleSaveNewProduct = async (product: ProductItem) => {
+        setIsSubmitting(true);
+        try {
+            let savedProduct;
+            const materialExists = materials.some(material => material.id === product.material);
+            const selectedMaterial = materials.find(material => material.id === product.material);
+    
+            console.log('materialExists:', materialExists);
+            console.log('selectedMaterial:', selectedMaterial);
+    
+            if (!materialExists) {
+                // Caso 1: material não existe, criar material com estilo e cor
+                const payload = {
+                    name: product.material,
+                    styles: [
                         {
-                            name: 'Example Color', // Ajuste conforme necessário
+                            name: product.style,
+                            colors: [
+                                {
+                                    name: product.color,
+                                    heights: [
+                                        {
+                                            feet: product.gateFeet,
+                                            pricePer8Ft: product.pricePer8Ft,
+                                            pricePer4Ft: product.pricePer4Ft,
+                                            priceSingleGate: product.priceSingleGate,
+                                            priceDoubleGate: product.priceDoubleGate,
+                                            gateFeet: product.gateFeet
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                };
+                console.log('Payload for new material:', JSON.stringify(payload, null, 2));
+                savedProduct = await saveProduct(payload, `https://fencier-api.onrender.com/material?tenantId=aa815619-4db7-4b79-a33f-9b51426db757`);
+            } else if (selectedMaterial) {
+                const selectedStyle = selectedMaterial.styles ? selectedMaterial.styles.find(style => style.name === product.style) : null;
+                console.log('selectedStyle:', selectedStyle);
+    
+                if (!selectedStyle) {
+                    // Caso 2: material existe, estilo não existe, criar novo estilo com nova cor
+                    const payload = {
+                        name: product.style,
+                        colors: [
+                            {
+                                name: product.color,
+                                heights: [
+                                    {
+                                        feet: product.gateFeet,
+                                        pricePer8Ft: product.pricePer8Ft,
+                                        pricePer4Ft: product.pricePer4Ft,
+                                        priceSingleGate: product.priceSingleGate,
+                                        priceDoubleGate: product.priceDoubleGate,
+                                        gateFeet: product.gateFeet
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+                    console.log('Payload for new style:', JSON.stringify(payload, null, 2));
+                    savedProduct = await saveProduct(payload, `https://fencier-api.onrender.com/style?materialId=${selectedMaterial.id}`);
+                } else {
+                    // Caso 3: material e estilo existem, cor não existe, criar nova cor no estilo existente
+                    const colorExists = selectedStyle.colors ? selectedStyle.colors.some(color => color.name === product.color) : false;
+    
+                    if (!colorExists) {
+                        const payload = {
+                            name: product.color,
                             heights: [
                                 {
                                     feet: product.gateFeet,
@@ -112,76 +106,81 @@ export default function Productform() {
                                     pricePer4Ft: product.pricePer4Ft,
                                     priceSingleGate: product.priceSingleGate,
                                     priceDoubleGate: product.priceDoubleGate,
-                                    gateFeet: product.gateFeet,
+                                    gateFeet: product.gateFeet
                                 }
                             ]
-                        }
-                    ]
+                        };
+                        console.log('Payload for new color:', JSON.stringify(payload, null, 2));
+                        savedProduct = await saveProduct(payload, `https://fencier-api.onrender.com/color?styleId=${selectedStyle.id}`);
+                    } else {
+                        console.log('Color already exists.');
+                        throw new Error('Color already exists.');
+                    }
                 }
-            ]
-        };
-    };
-
-    const handleSaveNewProduct = async () => {
-        if (newProduct) {
-            setIsSubmitting(true);
-            const payload = preparePayload(newProduct);
-            try {
-                const response = await fetch("https://fencier-api.onrender.com/material", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (response.ok) {
-                    const savedProduct = await response.json();
-                    setProducts([...products, savedProduct]);
-                    setIsEditing(false);
-                    setNewProduct(null);
-                } else {
-                    console.error("Failed to save product");
-                }
-            } catch (error) {
-                console.error("Error saving product:", error);
-            } finally {
-                setIsSubmitting(false);
+            } else {
+                throw new Error('Selected material not found.');
             }
+    
+            setProducts([...products, savedProduct]);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error("Error saving product:", error.message);
+                alert(`Error saving product: ${error.message}`);
+            } else {
+                console.error("An unexpected error occurred", error);
+                alert('An unexpected error occurred');
+            }
+        } finally {
+            setIsSubmitting(false);
+            setShowModal(false);
+        }
+    };
+    
+
+
+
+
+    const handleDelete = async (id: string) => {
+        setIsSubmitting(true);
+        console.log(`Deleting product with id: ${id}`);
+        try {
+            const deleteSuccess = await deleteProduct(id.toLowerCase());
+            if (deleteSuccess) {
+                setProducts(products.filter((product) => product.id.toLowerCase() !== id.toLowerCase()));
+                console.log(`Product with id ${id} deleted successfully`);
+            } else {
+                console.error(`Failed to delete product with id ${id}`);
+            }
+        } catch (error) {
+            console.error(`Error deleting product with id ${id}:`, error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
-    const handleEditProduct = (product: ProductItem) => {
-        setEditingProduct(product);
-    };
+    // Logic for displaying current products
+    const indexOfLastProduct = currentPage * itemsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-    const handleUpdateProduct = async () => {
-        if (editingProduct) {
-            setIsSubmitting(true);
-            const payload = preparePayload(editingProduct);
-            try {
-                const response = await fetch(`https://fencier-api.onrender.com/material/${editingProduct.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                });
+    // Logic for displaying page numbers
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(products.length / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
 
-                if (response.ok) {
-                    const updatedProduct = await response.json();
-                    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
-                    setEditingProduct(null);
-                } else {
-                    console.error("Failed to update product");
-                }
-            } catch (error) {
-                console.error("Error updating product:", error);
-            } finally {
-                setIsSubmitting(false);
-            }
-        }
-    };
+    const renderPageNumbers = pageNumbers.map(number => {
+        return (
+            <li
+                key={number}
+                id={number.toString()}  // Convertendo o número para string
+                onClick={() => setCurrentPage(number)}
+                className={`inline-block px-4 py-2 border ${currentPage === number ? 'bg-gray-300' : 'bg-white'} hover:bg-gray-200 cursor-pointer`}
+            >
+                {number}
+            </li>
+        );
+    });
 
     return (
         <div className="container mx-auto py-8">
@@ -191,179 +190,76 @@ export default function Productform() {
                         <div className="w-10 h-10 border-4 border-t-4 border-t-transparent border-gray-300 rounded-full animate-spin"></div>
                     </div>
                 ) : (
-                    <table className="w-full table-auto">
-                        <thead className="bg-gray-100 dark:bg-gray-800">
-                            <tr>
-                                <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Name</th>
-                                <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price per 8Ft</th>
-                                <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price per 4Ft</th>
-                                <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price Single Gate</th>
-                                <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price Double Gate</th>
-                                <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Gate Feet</th>
-                                <th className="px-6 py-4 text-right font-medium text-gray-700 dark:text-gray-300">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.map((product) => (
-                                <tr key={product.id} className="border-b border-gray-200 dark:border-gray-800">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0 h-10 w-10">
-                                                <Image alt="Product Image" className="h-10 w-10 rounded-full" src={product.image} />
-                                            </div>
-                                            <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900 dark:text-gray-50">{product.name}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-50">${product.pricePer8Ft}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-50">${product.pricePer4Ft}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-50">${product.priceSingleGate}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-50">${product.priceDoubleGate}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-50">${product.gateFeet}</div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right whitespace-nowrap">
-                                        <Button size="sm" variant="outline" onClick={() => handleEditProduct(product)}>
-                                            <PencilIcon className="h-4 w-4" />
-                                            <span className="sr-only">Update</span>
-                                        </Button>
-                                        <Button size="sm" variant="outline" onClick={() => handleDelete(product.id)}>
-                                            <TrashIcon className="h-4 w-4" />
-                                            <span className="sr-only">Delete</span>
-                                        </Button>
-                                    </td>
+                    <div>
+                        <table className="w-full table-auto">
+                            <thead className="bg-gray-100 dark:bg-gray-800">
+                                <tr>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Material</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Style</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Color</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price per 8Ft</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price per 4Ft</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price Single Gate</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Price Double Gate</th>
+                                    <th className="px-6 py-4 text-left font-medium text-gray-700 dark:text-gray-300">Gate Feet</th>
+                                    <th className="px-6 py-4 text-right font-medium text-gray-700 dark:text-gray-300">Actions</th>
                                 </tr>
-                            ))}
-                            {isEditing && newProduct && (
-                                <tr className="border-b border-gray-200 dark:border-gray-800">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="text"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={newProduct.name}
-                                            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={newProduct.pricePer8Ft}
-                                            onChange={(e) => setNewProduct({ ...newProduct, pricePer8Ft: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={newProduct.pricePer4Ft}
-                                            onChange={(e) => setNewProduct({ ...newProduct, pricePer4Ft: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={newProduct.priceSingleGate}
-                                            onChange={(e) => setNewProduct({ ...newProduct, priceSingleGate: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={newProduct.priceDoubleGate}
-                                            onChange={(e) => setNewProduct({ ...newProduct, priceDoubleGate: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={newProduct.gateFeet}
-                                            onChange={(e) => setNewProduct({ ...newProduct, gateFeet: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 text-right whitespace-nowrap">
-                                        <Button size="sm" variant="outline" onClick={handleSaveNewProduct}>
-                                            Save
-                                        </Button>
-                                    </td>
-                                </tr>
-                            )}
-                            {editingProduct && (
-                                <tr className="border-b border-gray-200 dark:border-gray-800">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="text"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={editingProduct.name}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={editingProduct.pricePer8Ft}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, pricePer8Ft: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={editingProduct.pricePer4Ft}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, pricePer4Ft: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={editingProduct.priceSingleGate}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, priceSingleGate: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={editingProduct.priceDoubleGate}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, priceDoubleGate: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <input
-                                            type="number"
-                                            className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-50"
-                                            value={editingProduct.gateFeet}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, gateFeet: parseFloat(e.target.value) })}
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 text-right whitespace-nowrap">
-                                        <Button size="sm" variant="outline" onClick={handleUpdateProduct}>
-                                            Update
-                                        </Button>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {currentProducts.map((product) => (
+                                    <tr key={product.id} className="border-b border-gray-200 dark:border-gray-800">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">{product.material}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">{product.style}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">{product.color}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">${product.pricePer8Ft}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">${product.pricePer4Ft}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">${product.priceSingleGate}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">${product.priceDoubleGate}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-50">${product.gateFeet}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <Button size="sm" variant="outline" onClick={() => handleDelete(product.id)}>
+                                                <TrashIcon className="h-4 w-4" />
+                                                <span className="sr-only">Delete</span>
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <ul className="flex justify-center mt-4">
+                            {renderPageNumbers}
+                        </ul>
+                    </div>
                 )}
             </div>
             <Button size="sm" variant="default" onClick={handleAddNewProduct} className="mt-4">
                 Add
             </Button>
+
+            {showModal && (
+                <AddProductModal
+                    isOpen={showModal}
+                    onClose={() => setShowModal(false)}
+                    materials={materials}
+                    onSave={handleSaveNewProduct}
+                />
+            )}
         </div>
     );
 }

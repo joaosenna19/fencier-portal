@@ -1,11 +1,9 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import Navbar from "@/components/ui/navbar";
 import { AuthProvider } from '@/context/AuthContext';
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Dashboard - Fencier"
@@ -17,13 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`flex h-screen ${inter.className}`}>
-        
-          
+    
+        <AuthProvider>
+          <Navbar />
+          <div className="flex flex-1 justify-center items-center p-4">
             {children}
-
-      </body>
-    </html>
+          </div>
+        </AuthProvider>
   );
 }
