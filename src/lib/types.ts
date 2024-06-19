@@ -44,3 +44,38 @@ export interface ProductResponse {
         }[];
     }[];
 }
+// src/lib/types.ts
+
+export interface Height {
+    id: string;
+    feet: number;
+    pricePer8Ft: number;
+    pricePer4Ft: number;
+    priceSingleGate: number;
+    priceDoubleGate: number;
+    gateFeet: number;
+    colorId: string;
+  }
+  
+  export interface Color {
+    id: string;
+    styleId: string;
+    name: string;
+    heights: Height[];
+  }
+  
+  export interface Style {
+    id: string;
+    materialId: string;
+    name: string;
+    colors: Color[];
+  }
+  
+  export interface Product {
+    id: string;
+    tenantId: string;
+    name: string;
+    createdAt: string;
+    styles: Style[];
+  }
+  
