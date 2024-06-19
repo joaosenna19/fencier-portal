@@ -1,14 +1,10 @@
-'use client'
-import { useEffect, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+'use client';
+import { ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 
-interface ProtectedRouteProps {
-  children: ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, isAuthenticated } = useAuth();
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
@@ -17,13 +13,13 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }, []);
 
   useEffect(() => {
-    if (isClient && !isAuthenticated()) {
+    if (isClient && !isAuthenticated) {
       router.push('/login');
     }
-  }, [user, router, isAuthenticated, isClient]);
+  }, [isClient, isAuthenticated, router]);
 
-  if (!isClient || !isAuthenticated()) {
-    return null; // ou um spinner de carregamento
+  if (!isClient || !isAuthenticated) {
+    return null; // Ou um spinner de carregamento
   }
 
   return <>{children}</>;

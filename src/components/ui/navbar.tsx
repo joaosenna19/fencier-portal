@@ -33,14 +33,14 @@ export default function Navbar() {
             <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">Main</div>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
-              href="/"
+              href="/dashboard"
             >
               <HomeIcon className="h-5 w-5" />
               Home
             </Link>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
-              href="/lead"
+              href="/dashboard/lead"
             >
               <Grid3x3Icon className="h-5 w-5" />
               Leads
@@ -50,7 +50,7 @@ export default function Navbar() {
             <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">Workspace</div>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
-              href="/product"
+              href="/dashboard/product"
             >
               <ScanBarcode className="h-5 w-5" />
               Products
@@ -60,7 +60,7 @@ export default function Navbar() {
             <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">Settings</div>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
-              href="/account"
+              href="/dashboard/account"
             >
               <UserIcon className="h-5 w-5" />
               Account

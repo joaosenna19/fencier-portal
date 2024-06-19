@@ -1,10 +1,9 @@
-// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Sidebar } from "lucide-react";
 import Navbar from "@/components/ui/navbar";
-import { AuthProvider } from '@/context/AuthContext';
-
+import { AuthProvider } from "@/context/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,13 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <AuthProvider>
     <html lang="en">
-      <body className={`flex h-screen ${inter.className}`}>
-        
-          
-            {children}
-
+      <body className="flex h-screen">
+        <div className="flex flex-1 justify-center items-center p-4">
+          {children}
+        </div>
       </body>
     </html>
+    </AuthProvider>
   );
 }

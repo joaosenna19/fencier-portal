@@ -1,4 +1,3 @@
-// src/components/ui/login.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";

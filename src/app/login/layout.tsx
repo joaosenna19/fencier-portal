@@ -1,5 +1,5 @@
 // src/app/login/layout.tsx
-import { AuthProvider } from "@/context/AuthContext";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
@@ -15,11 +15,11 @@ export default function LoginLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthProvider>
+    
         <div className="flex flex-1 justify-center items-center p-4">
           {children}
         </div>
-        </AuthProvider>
+        
   
   );
 }
