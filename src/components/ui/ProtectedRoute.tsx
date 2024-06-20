@@ -1,25 +1,23 @@
-'use client';
-import { ReactNode, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+// src/components/ui/ProtectedRoute.tsx
+"use client";
+import { ReactNode, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient && !isAuthenticated) {
-      router.push('/login');
+    if (!loading) {
+      if (!isAuthenticated()) {
+        router.push("/login");
+      }
     }
-  }, [isClient, isAuthenticated, router]);
+  }, [loading, isAuthenticated, router]);
 
-  if (!isClient || !isAuthenticated) {
-    return null; // Ou um spinner de carregamento
+  if (loading || !isAuthenticated()) {
+    return <div>Loading...</div>; // Display a loading state while checking authentication
   }
 
   return <>{children}</>;

@@ -1,10 +1,17 @@
-'use client'
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+"use client";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 interface User {
-  token: string;
-  // Adicione outras propriedades do usuário conforme necessário
+  userId: string;
+  email: string;
+  name: string;
 }
 
 interface AuthContextType {
@@ -22,45 +29,71 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true); // Add a loading state
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    const loggedUser = localStorage.getItem('user');
-    if (loggedUser) {
-      setUser(JSON.parse(loggedUser));
-    } else if (pathname !== '/login') {
-      router.push('/login');
-    }
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch("https://fencier-api.onrender.com/admin", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to verify authentication:", error);
+        setUser(null);
+      } finally {
+        setLoading(false); // Set loading to false after checking auth status
+      }
+    };
+
+    checkAuthStatus();
   }, [pathname, router]);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('https://fencier-api.onrender.com/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
-      const data = await response.json();
-      if (data.token) {
+      const response = await fetch(
+        "https://fencier-api.onrender.com/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
         setUser(data);
-        localStorage.setItem('user', JSON.stringify(data));
-        router.push('/');
+        router.push("/dashboard");
       } else {
-        throw new Error('Invalid credentials');
+        throw new Error("Invalid credentials");
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    router.push('/login');
+  const logout = async () => {
+    try {
+      await fetch("https://fencier-api.onrender.com/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      setUser(null);
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const isAuthenticated = () => {
@@ -69,7 +102,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
-      {children}
+      {!loading && children} {/* Only render children if not loading */}
     </AuthContext.Provider>
   );
 };
@@ -77,7 +110,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

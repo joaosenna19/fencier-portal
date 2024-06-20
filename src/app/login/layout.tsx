@@ -3,10 +3,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "Login - Fencier"
+  title: "Login - Fencier",
 };
 
 export default function LoginLayout({
@@ -15,11 +13,8 @@ export default function LoginLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
-        <div className="flex flex-1 justify-center items-center p-4">
-          {children}
-        </div>
-        
-  
+    <div className="flex flex-1 justify-center items-center p-4">
+      {children}
+    </div>
   );
 }

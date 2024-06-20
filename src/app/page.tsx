@@ -1,18 +1,19 @@
-// src/app/page.tsx
-import { AuthProvider } from '@/context/AuthContext';
-import Maindashboard from '@/components/ui/maindashboard';
-import ProtectedRoute from '@/components/ui/ProtectedRoute';
+"use client";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
-  return (
-    <AuthProvider>
-      <ProtectedRoute>
-        <main className="p-4 md:p-8">
-          <div className="flex flex-col space-y-4">
-            <Maindashboard />
-          </div>
-        </main>
-      </ProtectedRoute>
-    </AuthProvider>
-  );
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  return null; // or a loading spinner if you want to show something while redirecting
 }
