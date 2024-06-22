@@ -1,116 +1,80 @@
-"use client";
-import {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
-} from "react";
-import { useRouter, usePathname } from "next/navigation";
-
-interface User {
-  userId: string;
-  email: string;
-  name: string;
-}
+'use client';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation'; // Changed import from 'next/router' to 'next/navigation'
 
 interface AuthContextType {
-  user: User | null;
+  isAuthenticated: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  isAuthenticated: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Add a loading state
-  const router = useRouter();
-  const pathname = usePathname();
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter(); // Correct hook from 'next/navigation'
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await fetch("https://fencier-api.onrender.com/admin", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Failed to verify authentication:", error);
-        setUser(null);
-      } finally {
-        setLoading(false); // Set loading to false after checking auth status
-      }
-    };
-
-    checkAuthStatus();
-  }, [pathname, router]);
-
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await fetch(
-        "https://fencier-api.onrender.com/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data);
-        router.push("/dashboard");
-      } else {
-        throw new Error("Invalid credentials");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
+    const token = Cookies.get('auth_token');
+    if (token) {
+      setIsAuthenticated(true);
     }
-  };
+    setLoading(false);
+  }, []);
 
-  const logout = async () => {
+  const login = async (email: any, password: any) => {
     try {
-      await fetch("https://fencier-api.onrender.com/auth/logout", {
-        method: "POST",
-        credentials: "include",
+      console.log('Sending login request with email:', email, 'and password:', password); // Debug log
+      const response = await fetch('https://fencier-api.onrender.com/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // Include cookies in the request
       });
-      setUser(null);
-      router.push("/login");
+  
+      console.log('Response status:', response.status); // Debug log
+      const responseData = await response.json();
+      console.log('Response data:', responseData); // Debug log
+  
+      if (response.ok) {
+        if (responseData.token) {
+          Cookies.set('auth_token', responseData.token); // Store the token in a cookie
+          setIsAuthenticated(true);
+          router.push('/dashboard/maindashboard');
+        } else {
+          console.error('Token missing in response:', responseData);
+          alert('Login successful, but the authentication token is missing. Please contact support.');
+        }
+      } else {
+        console.error('Server response error:', responseData);
+        alert('Invalid credentials or missing token');
+      }
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error('Login error:', error);
+      alert('Error logging in');
     }
-  };
+  };  
 
-  const isAuthenticated = () => {
-    return !!user;
+  const logout = () => {
+    Cookies.remove('auth_token');
+    setIsAuthenticated(false);
+    router.push('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
-      {!loading && children} {/* Only render children if not loading */}
+    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) {
+    throw new Error('useAuth must be used inside um AuthProvider');
   }
   return context;
 };

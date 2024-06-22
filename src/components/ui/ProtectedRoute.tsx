@@ -1,4 +1,3 @@
-// src/components/ui/ProtectedRoute.tsx
 "use client";
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -10,13 +9,13 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!loading) {
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         router.push("/login");
       }
     }
   }, [loading, isAuthenticated, router]);
 
-  if (loading || !isAuthenticated()) {
+  if (loading || !isAuthenticated) {
     return <div>Loading...</div>; // Display a loading state while checking authentication
   }
 
