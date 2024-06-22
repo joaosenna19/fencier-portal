@@ -1,14 +1,19 @@
-import Image from "next/image";
-import Productform from "@/components/ui/productsform";
-import Maindashboard from "@/components/ui/maindashboard";
-import Login from "@/components/ui/login";
+"use client";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
-  return (
-    <main className="p-4 md:p-8">
-      <div className="flex flex-col space-y-4">
-        <Maindashboard/>
-      </div>
-    </main>
-  );
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  return null; // or a loading spinner if you want to show something while redirecting
 }

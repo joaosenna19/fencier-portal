@@ -10,11 +10,6 @@ export default function Home() {
       <div className="flex flex-col space-y-4">
         <Productform />
         <div className="flex justify-end">
-          <Link href="/product/add">
-            <Button size="lg" variant="outline" className="bg-green-500 text-white hover:bg-green-600">
-              Add
-            </Button>
-          </Link>
         </div>
       </div>
     </main>
