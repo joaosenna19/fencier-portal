@@ -4,7 +4,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { deleteProduct, saveProduct, updateProduct } from "@/services/productServices";
 import { Button } from "@/components/ui/button";
 import { TrashIcon, PencilIcon } from "@/components/icons";
-import AddProductModal from "@/components/ui/AddProductModal";
+import AddProductModal from "@/components/AddProductModal";
 
 interface ProductItem {
     id: string;

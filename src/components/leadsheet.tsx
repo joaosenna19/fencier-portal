@@ -15,10 +15,11 @@ export default function Leadsheet() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/quote?tenantId=aa815619-4db7-4b79-a33f-9b51426db757`);
       const data: Lead[] = await response.json();
       setData(data);
+      console.log("Leads fetched:", data);
     } catch (error) {
       console.error("Error fetching leads:", error);
     } finally {
-      setLoading(false); // Definir como falso após a conclusão do fetch
+      setLoading(false);
     }
   };
 
@@ -73,7 +74,7 @@ export default function Leadsheet() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((lead) => (
+              {/* {data.map((lead) => (
                 <TableRow key={lead.id}>
                   <TableCell>{lead.customerInfo[0].firstName} {lead.customerInfo[0].lastName}</TableCell>
                   <TableCell>{lead.customerInfo[0].phoneNumber}</TableCell>
@@ -114,7 +115,7 @@ export default function Leadsheet() {
                     </Popover>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))} */}
             </TableBody>
           </Table>
         )}

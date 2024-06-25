@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Setting from "@/components/ui/setting";
+import Setting from "@/components/setting";
 
 export default function Home() {
   return (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import Productform from "@/components/ui/productsform";
+import Productform from "@/components/productsform";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
