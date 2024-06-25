@@ -15,5 +15,5 @@ export default function Home() {
     }
   }, [isAuthenticated, router]);
 
-  return null; // or a loading spinner if you want to show something while redirecting
+  return null;
 }

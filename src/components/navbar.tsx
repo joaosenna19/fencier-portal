@@ -1,8 +1,9 @@
-'use client'
+"use client";
 import Link from "next/link";
-import { JSX, SVGProps, useState } from 'react';
-import { ScanBarcode, LogOut, Menu, X } from 'lucide-react';
-import Image from 'next/image';
+import { JSX, SVGProps, useState } from "react";
+import { ScanBarcode, Menu, X } from "lucide-react";
+import Image from "next/image";
+import LogoutButton from "./logoutbutton";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,7 @@ export default function Navbar() {
     <div className="relative flex flex-col h-full bg-white border-r border-gray-200 dark:bg-gray-950 dark:border-gray-800">
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-800">
         <Link className="flex items-center gap-2" href="#">
-        <Image
+          <Image
             src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=288,fit=crop,q=95/mxBryjRM7GuDGyR9/fundo-branco-1-m2W46b4v3wc7BGjn.png"
             alt="Rio Fence Icon"
             width={48} // Ajuste conforme necessário
@@ -27,10 +28,16 @@ export default function Navbar() {
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
-      <div className={`flex flex-col flex-1 overflow-auto ${isOpen ? 'block' : 'hidden'} md:block`}>
+      <div
+        className={`flex flex-col flex-1 overflow-auto ${
+          isOpen ? "block" : "hidden"
+        } md:block`}
+      >
         <nav className="py-4">
           <div className="space-y-1">
-            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">Main</div>
+            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">
+              Main
+            </div>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
               href="/dashboard"
@@ -47,7 +54,9 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="space-y-1 mt-4">
-            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">Workspace</div>
+            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">
+              Workspace
+            </div>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
               href="/dashboard/product"
@@ -57,7 +66,9 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="space-y-1 mt-4">
-            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">Settings</div>
+            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">
+              Settings
+            </div>
             <Link
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
               href="/dashboard/account"
@@ -69,13 +80,7 @@ export default function Navbar() {
         </nav>
       </div>
       <div className="absolute bottom-0 left-0 w-full p-4">
-        <Link
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
-          href="/login"
-        >
-          <LogOut className="h-5 w-5" />
-          Logout
-        </Link>
+        <LogoutButton />
       </div>
     </div>
   );

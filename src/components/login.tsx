@@ -1,29 +1,40 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
+"use client";
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  Card,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from "@/context/AuthContext";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const loginSchema = z.object({
+    email: z.string().email({ message: "You must enter a valid email." }),
+    password: z
+      .string()
+      .min(3, { message: "Password must be at least 3 characters." }),
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await login(email, password);
+  type loginSchema = z.infer<typeof loginSchema>;
+
+  const { register, handleSubmit, formState, clearErrors, reset } =
+    useForm<loginSchema>({
+      resolver: zodResolver(loginSchema),
+    });
+
+  const onSubmit: SubmitHandler<loginSchema> = async (data) => {
+    clearErrors();
+    await login(data.email, data.password);
   };
-
-  if (!isClient) {
-    return null; // Ou um spinner de carregamento
-  }
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -34,34 +45,39 @@ export default function LoginPage() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
-            <Label htmlFor="email">Email or User Code</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="email"
-              placeholder="Enter your email or user code"
-              required
+              placeholder="Enter your email"
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email")}
             />
+            {formState.errors.email && (
+              <p className="text-xs text-red-400 m-1">
+                {formState.errors.email.message}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
-              id="password"
-              placeholder="Enter your password"
-              required
+              {...register("password")}
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
             />
+            {formState.errors.password && (
+              <p className="text-xs text-red-400 m-1">
+                {formState.errors.password.message}
+              </p>
+            )}
           </div>
-          <CardFooter>
-            <Button className="w-full top-5" type="submit">
-              Login
-            </Button>
-          </CardFooter>
+          <Button
+            className="w-full bg-blue-500 hover:bg-blue-600 mt-2"
+            type="submit"
+          >
+            Login
+          </Button>
         </form>
       </CardContent>
     </Card>

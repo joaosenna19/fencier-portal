@@ -7,6 +7,7 @@ import {
   ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface User {
   userId: string;
@@ -28,18 +29,22 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Add a loading state
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/admin`, {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/admin`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setUser(data);
@@ -50,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error("Failed to verify authentication:", error);
         setUser(null);
       } finally {
-        setLoading(false); // Set loading to false after checking auth status
+        setLoading(false);
       }
     };
 
@@ -59,6 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log("login");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/auth/login`,
         {
@@ -72,21 +78,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       );
 
       if (response.ok) {
+        console.log("login ok");
         const data = await response.json();
         setUser(data);
         router.push("/dashboard");
       } else {
-        throw new Error("Invalid credentials");
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: "Invalid email or password",
+        });
       }
     } catch (error) {
-      console.error("Login error:", error);
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "Please try again later.",
+      });
     }
   };
 
   const logout = async () => {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/auth/logout`, {
-        method: "POST",
+        method: "GET",
         credentials: "include",
       });
       setUser(null);
@@ -97,12 +112,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const isAuthenticated = () => {
-    return !!user;
+    return user !== null;
   };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
-      {!loading && children} {/* Only render children if not loading */}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
