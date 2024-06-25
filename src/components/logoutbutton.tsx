@@ -8,13 +8,7 @@ const LogoutButton = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    // Realizar lógica de logout
-    // Por exemplo, limpar tokens de autenticação ou cookies
-
-    // Definir mensagem de logout
     setLogoutMessage('You have successfully logged out!');
-
-    // Redirecionar para a página de login
     router.push('/login');
   };
 

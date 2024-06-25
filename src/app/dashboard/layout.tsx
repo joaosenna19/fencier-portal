@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import Navbar from "@/components/ui/navbar";
+import Navbar from "@/components/navbar";
 import { AuthProvider } from '@/context/AuthContext';
 
 

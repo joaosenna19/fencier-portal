@@ -1,7 +1,7 @@
 // src/app/page.tsx
 import { AuthProvider } from "@/context/AuthContext";
-import Maindashboard from "@/components/ui/maindashboard";
-import ProtectedRoute from "@/components/ui/ProtectedRoute";
+import Maindashboard from "@/components/maindashboard";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Dashboard() {
   return (
