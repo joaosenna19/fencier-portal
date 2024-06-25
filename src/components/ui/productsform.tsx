@@ -65,7 +65,7 @@ export default function ProductForm() {
                     ]
                 };
                 console.log('Payload for new material:', JSON.stringify(payload, null, 2));
-                savedProduct = await saveProduct(payload, `https://fencier-api.onrender.com/material?tenantId=aa815619-4db7-4b79-a33f-9b51426db757`);
+                savedProduct = await saveProduct(payload, `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/material?tenantId=aa815619-4db7-4b79-a33f-9b51426db757`);
             } else if (selectedMaterial) {
                 const selectedStyle = selectedMaterial.styles ? selectedMaterial.styles.find(style => style.name === product.style) : null;
                 console.log('selectedStyle:', selectedStyle);
@@ -91,7 +91,7 @@ export default function ProductForm() {
                         ]
                     };
                     console.log('Payload for new style:', JSON.stringify(payload, null, 2));
-                    savedProduct = await saveProduct(payload, `https://fencier-api.onrender.com/style?materialId=${selectedMaterial.id}`);
+                    savedProduct = await saveProduct(payload, `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/style?materialId=${selectedMaterial.id}`);
                 } else {
                     // Caso 3: material e estilo existem, cor não existe, criar nova cor no estilo existente
                     const colorExists = selectedStyle.colors ? selectedStyle.colors.some(color => color.name === product.color) : false;
@@ -111,7 +111,7 @@ export default function ProductForm() {
                             ]
                         };
                         console.log('Payload for new color:', JSON.stringify(payload, null, 2));
-                        savedProduct = await saveProduct(payload, `https://fencier-api.onrender.com/color?styleId=${selectedStyle.id}`);
+                        savedProduct = await saveProduct(payload, `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/color?styleId=${selectedStyle.id}`);
                     } else {
                         console.log('Color already exists.');
                         throw new Error('Color already exists.');
