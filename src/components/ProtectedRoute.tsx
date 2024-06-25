@@ -1,20 +1,18 @@
-// src/components/ui/ProtectedRoute.tsx
 "use client";
 import { ReactNode, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext"
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-   
-      if (!isAuthenticated()) {
-        router.push("/login");
-      }
-    
-  }, [, isAuthenticated, router]);
+    if (user === null && pathname !== "/login") {
+      router.push("/login");
+    }
+  }, [isAuthenticated, user, router, pathname]);
 
   return <>{children}</>;
 };

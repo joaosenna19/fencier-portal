@@ -2,11 +2,11 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import Navbar from "@/components/navbar";
-import { AuthProvider } from '@/context/AuthContext';
-
+import { AuthProvider } from "@/context/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export const metadata: Metadata = {
-  title: "Dashboard - Fencier"
+  title: "Dashboard - Fencier",
 };
 
 export default function RootLayout({
@@ -15,12 +15,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
-        <AuthProvider>
-          <Navbar />
-          <div className="flex flex-1 justify-center items-center p-4">
-            {children}
-          </div>
-        </AuthProvider>
+    <AuthProvider>
+      <ProtectedRoute>
+        <Navbar />
+        <div className="flex flex-1 justify-center items-center p-4">
+          {children}
+        </div>
+      </ProtectedRoute>
+    </AuthProvider>
   );
 }
