@@ -46,7 +46,7 @@ export const useProducts = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch("https://fencier-api.onrender.com/material?tenantId=aa815619-4db7-4b79-a33f-9b51426db757");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/material?tenantId=aa815619-4db7-4b79-a33f-9b51426db757`);
                 const data: Material[] = await response.json();
 
                 const stylesArray: any[] = [];

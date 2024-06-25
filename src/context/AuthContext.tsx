@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch("https://fencier-api.onrender.com/admin", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/admin`, {
           method: "GET",
           credentials: "include",
         });
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await fetch(
-        "https://fencier-api.onrender.com/auth/login",
+        `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/auth/login`,
         {
           method: "POST",
           headers: {
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     try {
-      await fetch("https://fencier-api.onrender.com/auth/logout", {
+      await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

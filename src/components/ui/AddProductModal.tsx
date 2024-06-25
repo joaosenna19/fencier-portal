@@ -42,7 +42,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, mate
 
     const fetchStyles = async (materialId: string) => {
         try {
-            const response = await fetch(`https://fencier-api.onrender.com/style/?materialId=${materialId}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/style/?materialId=${materialId}`);
             const data = await response.json();
             setStyles(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -53,7 +53,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, mate
 
     const fetchColors = async (styleId: string) => {
         try {
-            const response = await fetch(`https://fencier-api.onrender.com/color/?styleId=${styleId}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/color/?styleId=${styleId}`);
             const data = await response.json();
             setColors(Array.isArray(data) ? data : []);
         } catch (error) {

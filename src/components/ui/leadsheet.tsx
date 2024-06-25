@@ -12,7 +12,7 @@ export default function Leadsheet() {
 
   const fetchLeads = async () => {
     try {
-      const response = await fetch('https://fencier-api.onrender.com/quote?tenantId=aa815619-4db7-4b79-a33f-9b51426db757');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/quote?tenantId=aa815619-4db7-4b79-a33f-9b51426db757`);
       const data: Lead[] = await response.json();
       setData(data);
     } catch (error) {

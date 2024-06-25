@@ -1,6 +1,6 @@
 export const deleteProduct = async (id: string) => {
     const lowerCaseId = id.toLowerCase();
-    const url = `https://fencier-api.onrender.com/material?id=${lowerCaseId}`;
+    const url = `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/material?id=${lowerCaseId}`;
     console.log(`Attempting to delete product with URL: ${url}`);
 
     const response = await fetch(url, {
@@ -34,7 +34,7 @@ export const saveProduct = async (product: any, url: string) => {
 };
 
 export const updateProduct = async (id: string, product: any) => {
-    const response = await fetch(`https://fencier-api.onrender.com/material/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/material/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
