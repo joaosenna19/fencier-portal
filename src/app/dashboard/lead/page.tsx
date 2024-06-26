@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Leadsheet from "@/components/leadsheet";
+import Leadsheet from "@/components/Leadsheet";
 
 export default function Home() {
   return (

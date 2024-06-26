@@ -3,9 +3,9 @@ import Link from "next/link";
 import { JSX, SVGProps, useState } from "react";
 import { ScanBarcode, Menu, X } from "lucide-react";
 import Image from "next/image";
-import LogoutButton from "./logoutbutton";
+import LogoutButton from "./LogoutButton";
 
-export default function Navbar() {
+export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -13,8 +13,8 @@ export default function Navbar() {
   };
 
   return (
-    <div className="relative flex flex-col h-full bg-white border-r border-gray-200 dark:bg-gray-950 dark:border-gray-800">
-      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-800">
+    <div className="relative flex flex-col h-full bg-white border-r border-gray-200">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-20">
         <Link className="flex items-center gap-2" href="#">
           <Image
             src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=288,fit=crop,q=95/mxBryjRM7GuDGyR9/fundo-branco-1-m2W46b4v3wc7BGjn.png"
@@ -35,18 +35,18 @@ export default function Navbar() {
       >
         <nav className="py-4">
           <div className="space-y-1">
-            <div className="px-4 text-xs font-medium text-gray-500 dark:text-gray-400">
+            <div className="px-4 text-xs font-medium text-gray-500">
               Main
             </div>
             <Link
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 "
               href="/dashboard"
             >
               <HomeIcon className="h-5 w-5" />
               Home
             </Link>
             <Link
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 "
               href="/dashboard/lead"
             >
               <Grid3x3Icon className="h-5 w-5" />
@@ -58,7 +58,7 @@ export default function Navbar() {
               Workspace
             </div>
             <Link
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 "
               href="/dashboard/product"
             >
               <ScanBarcode className="h-5 w-5" />
@@ -70,7 +70,7 @@ export default function Navbar() {
               Settings
             </div>
             <Link
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 "
               href="/dashboard/account"
             >
               <UserIcon className="h-5 w-5" />

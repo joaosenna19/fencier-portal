@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import Navbar from "@/components/navbar";
+import NavBar from "@/components/NavBar";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <ProtectedRoute>
-        <Navbar />
+        <NavBar />
         <div className="flex flex-1 justify-center items-center p-4">
           {children}
         </div>

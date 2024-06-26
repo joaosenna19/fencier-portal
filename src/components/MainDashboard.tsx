@@ -20,7 +20,7 @@ export default function Maindashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Monthly Lead Goal</CardTitle>
-              <TargetIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <TargetIcon className="w-4 h-4 text-gray-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">500</div>
@@ -29,21 +29,21 @@ export default function Maindashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Current Month Leads</CardTitle>
-              <UsersIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <UsersIcon className="w-4 h-4 text-gray-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">423</div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">84.6% of monthly goal</p>
+              <p className="text-xs text-gray-500">84.6% of monthly goal</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Year-to-Date Leads</CardTitle>
-              <CalendarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <CalendarIcon className="w-4 h-4 text-gray-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">+12.3% from last year</p>
+              <p className="text-xs text-gray-500">+12.3% from last year</p>
             </CardContent>
           </Card>
         </div>

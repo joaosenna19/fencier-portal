@@ -1,4 +1,4 @@
-import Setting from "@/components/setting";
+import Setting from "@/components/Setting";
 
 export default function Home() {
   return (
