@@ -12,7 +12,8 @@ import { useToast } from "@/components/ui/use-toast";
 interface User {
   userId: string;
   email: string;
-  name: string;
+  firstName: string;
+  tenantId: string;
 }
 
 interface AuthContextType {
