@@ -65,7 +65,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log("login");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/auth/login`,
         {
@@ -79,7 +78,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       );
 
       if (response.ok) {
-        console.log("login ok");
         const data = await response.json();
         setUser(data);
         router.push("/dashboard");
