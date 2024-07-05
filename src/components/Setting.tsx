@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   CardTitle,
   CardDescription,
@@ -11,11 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 
-
 export default function Setting() {
   const { user } = useAuth();
-  console.log(user);
-  
+
   return (
     <section className="container mx-auto max-w-3xl py-12 px-4 md:px-6">
       <div className="grid gap-8">

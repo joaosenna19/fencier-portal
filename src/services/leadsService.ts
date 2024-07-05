@@ -14,7 +14,6 @@ export const fetchLeads = async (
     );
     const data: Lead[] = await response.json();
     setData(data);
-    console.log("Leads fetched:", data);
   } catch (error) {
     console.error("Error fetching leads:", error);
   } finally {
@@ -73,7 +72,6 @@ export const editLead = async (
     }
 
     const data = await response.json();
-    console.log("Lead edited:", data);
     fetchLeads();
     toast({
       title: "Lead edited",

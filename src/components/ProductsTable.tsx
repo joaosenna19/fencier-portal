@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Material } from "@/interfaces/material";
-import SelectionCard from "@/components/SelectionCard";
 import SelectionSection from "@/components/SelectionSection";
+import { useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function ProductForm() {
   const [materials, setMaterials] = useState<Material[]>([]);
@@ -12,6 +13,8 @@ export default function ProductForm() {
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedHeight, setSelectedHeight] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const params = useSearchParams();
 
   const handleMaterialSelect = (material: Material) => {
     setSelectedMaterial(material);
@@ -35,90 +38,90 @@ export default function ProductForm() {
     setSelectedHeight(heightId);
   };
 
-  const handleAddNewMaterial = () => {
-    // Handle adding a new material here
-  };
-
-  const handleAddNewStyle = () => {
-    // Handle adding a new style here
-  };
-
-  const handleAddNewColor = () => {
-    // Handle adding a new color here
-  };
-
-  const handleAddNewHeight = () => {
-    // Handle adding a new height here
-  };
+  useEffect(() => {
+    const fetchAndSetMaterials = async () => {
+      setIsLoading(true);
+      const data = await fetchMaterials();
+      setMaterials(data);
+      setIsLoading(false);
+    };
+    fetchAndSetMaterials();
+  }, []);
 
   useEffect(() => {
-    const data = fetchMaterials();
-    data.then((materials) => {
-      setMaterials(materials);
-      console.log(materials);
-    });
-  }, []);
+    const fetchAndSetMaterials = async () => {
+      if (!params.get("addMaterial") && !params.get("deleteMaterials")) {
+        setIsLoading(true);
+        const data = await fetchMaterials();
+        setMaterials(data);
+        setIsLoading(false);
+      }
+    };
+    fetchAndSetMaterials();
+  }, [params]);
 
   return (
     <section className="w-full">
       <div className="flex flex-col">
-        <div className="flex flex-col">
-          <SelectionSection
-            title="Materials"
-            items={materials.map((material) => ({
-              id: material.id,
-              name: material.name,
-              imageUrl: material.imageUrl,
-            }))}
-            selectedId={selectedMaterial?.id || null}
-            onSelect={(id) =>
-              handleMaterialSelect(
-                materials.find((m) => m.id === id) as Material
-              )
-            }
-            onAddNew={handleAddNewMaterial}
-          />
-          {selectedMaterial && (
+        {isLoading ? (
+          <div className="flex justify-center items-center">
+            <Loader2 className="animate-spin" />
+          </div>
+        ) : (
+          <div className="flex flex-col">
             <SelectionSection
-              title="Styles"
-              items={selectedMaterial.styles}
-              selectedId={selectedStyle}
-              onSelect={handleStyleSelect}
-              onAddNew={handleAddNewStyle}
-            />
-          )}
-          {selectedMaterial && selectedStyle && (
-            <SelectionSection
-              title="Colors"
-              items={
-                selectedMaterial.styles.find(
-                  (style) => style.id === selectedStyle
-                )?.colors || []
+              title="Materials"
+              items={materials.map((material) => ({
+                id: material.id,
+                name: material.name,
+                imageUrl: material.imageUrl,
+              }))}
+              selectedId={selectedMaterial?.id || null}
+              onSelect={(id) =>
+                handleMaterialSelect(
+                  materials.find((m) => m.id === id) as Material
+                )
               }
-              selectedId={selectedColor}
-              onSelect={handleColorSelect}
-              onAddNew={handleAddNewColor}
             />
-          )}
-          {selectedMaterial && selectedStyle && selectedColor && (
-            <SelectionSection
-              title="Heights"
-              items={
-                selectedMaterial.styles
-                  .find((style) => style.id === selectedStyle)
-                  ?.colors.find((color) => color.id === selectedColor)
-                  ?.heights.map((height) => ({
-                    id: height.id,
-                    name: `${height.feet} ft`,
-                    imageUrl: height.imageUrl,
-                  })) || []
-              }
-              selectedId={selectedHeight}
-              onSelect={handleHeightSelect}
-              onAddNew={handleAddNewHeight}
-            />
-          )}
-        </div>
+            {selectedMaterial && (
+              <SelectionSection
+                title="Styles"
+                items={selectedMaterial.styles}
+                selectedId={selectedStyle}
+                onSelect={handleStyleSelect}
+              />
+            )}
+            {selectedMaterial && selectedStyle && (
+              <SelectionSection
+                title="Colors"
+                items={
+                  selectedMaterial.styles.find(
+                    (style) => style.id === selectedStyle
+                  )?.colors || []
+                }
+                selectedId={selectedColor}
+                onSelect={handleColorSelect}
+              />
+            )}
+            {selectedMaterial && selectedStyle && selectedColor && (
+              <SelectionSection
+                title="Heights"
+                items={
+                  selectedMaterial.styles
+                    .find((style) => style.id === selectedStyle)
+                    ?.colors.find((color) => color.id === selectedColor)
+                    ?.heights.map((height) => ({
+                      id: height.id,
+                      name: `${height.feet} ft`,
+                      imageUrl: height.imageUrl,
+                    })) || []
+                }
+                selectedId={selectedHeight}
+                onSelect={handleHeightSelect}
+              />
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

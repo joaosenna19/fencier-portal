@@ -9,13 +9,14 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PencilLine, Trash } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 interface SelectionCardProps {
   id: string;
   name: string;
   imageUrl: string;
   isSelected: boolean;
+  param: string;
   onSelect: (id: string) => void;
 }
 
@@ -24,10 +25,9 @@ const SelectionCard: React.FC<SelectionCardProps> = ({
   name,
   imageUrl,
   isSelected,
+  param,
   onSelect,
 }) => {
-  const { user } = useAuth();
-  console.log(user);
   return (
     <div className="rounded-md">
       <Card
@@ -46,9 +46,16 @@ const SelectionCard: React.FC<SelectionCardProps> = ({
           <Button className="bg-blue-500 hover:bg-blue-600 m-1 p-2 border rounded-3x1">
             <PencilLine size={14} />
           </Button>
-          <Button variant="destructive" className="m-1 p-2 border rounded-3x1">
-            <Trash size={14} />
-          </Button>
+          <Link
+            href={`/dashboard/product?deleteMaterials=true&id=${id}&param=${param}`}
+          >
+            <Button
+              variant="destructive"
+              className="m-1 p-2 border rounded-3x1"
+            >
+              <Trash size={14} />
+            </Button>
+          </Link>
         </CardFooter>
       </Card>
     </div>
