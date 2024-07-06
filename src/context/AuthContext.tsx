@@ -10,7 +10,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 
 interface User {
-  userId: string;
+  id: string;
   email: string;
   firstName: string;
   tenantId: string;
