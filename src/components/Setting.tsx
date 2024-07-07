@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import UpdateEmailCard from "./UpdateEmailCard";
+
 
 export default function Setting() {
   const { user } = useAuth();
@@ -24,21 +26,7 @@ export default function Setting() {
           </p>
         </div>
         <div className="grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Email Address</CardTitle>
-              <CardDescription>
-                Update the email address associated with your account.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" placeholder={user?.email} type="email" />
-              </div>
-              <Button className="ml-auto">Update Email</Button>
-            </CardContent>
-          </Card>
+          <UpdateEmailCard userId={user?.id} />
           <Card>
             <CardHeader>
               <CardTitle>Change Password</CardTitle>
