@@ -1,5 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   TableHead,
   TableRow,
@@ -7,7 +14,7 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
-import { JSX, SVGProps, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Lead } from "@/lib/types";
 import LeadRow from "@/components/LeadRow";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,24 +23,45 @@ import { fetchLeads, deleteLead, editLead } from "@/services/leadsService";
 export default function Leadsheet() {
   const [data, setData] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
     fetchLeads(setData, setLoading);
   }, []);
 
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+  };
+
+  const filteredData =
+    statusFilter !== "ALL"
+      ? data.filter(
+          (lead) => lead.status.toLowerCase() === statusFilter.toLowerCase()
+        )
+      : data;
+
   return (
     <div className="flex">
       <main className="flex-grow p-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-lg font-medium">Leads</h1>
-          <Button
-            className="px-2 py-1 bg-gray-800 text-white rounded-lg flex items-center space-x-2 text-sm"
-            type="button"
-          >
-            <DownloadIcon className="w-4 h-4" />
-            <span>Download</span>
-          </Button>
+          <div className="grid gap-4">
+            <div className="grid gap-1.5">
+              <Label htmlFor="filter">Filter by status</Label>
+              <Select onValueChange={handleStatusFilterChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="ACCEPTED">Accepted</SelectItem>
+                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
         {loading ? (
           <div className="flex justify-center items-center py-8">
@@ -55,7 +83,7 @@ export default function Leadsheet() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((lead) => (
+              {filteredData.map((lead) => (
                 <LeadRow
                   key={lead.id}
                   lead={lead}
@@ -76,28 +104,5 @@ export default function Leadsheet() {
         )}
       </main>
     </div>
-  );
-}
-
-function DownloadIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" x2="12" y1="15" y2="3" />
-    </svg>
   );
 }
