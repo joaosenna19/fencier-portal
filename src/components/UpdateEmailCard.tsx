@@ -13,6 +13,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import updateEmail from "@/services/updateEmail";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 interface UpdateEmailCardProps {
   userId: string | undefined;
@@ -20,6 +22,7 @@ interface UpdateEmailCardProps {
 
 export default function UpdateEmailCard({ userId }: UpdateEmailCardProps) {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const emailSchema = zod.object({
     email: zod.string().email({ message: "Invalid email address" }),
@@ -37,6 +40,7 @@ export default function UpdateEmailCard({ userId }: UpdateEmailCardProps) {
   });
 
   const onSubmit: SubmitHandler<EmailForm> = async (data) => {
+    setIsSubmitting(true);
     const res = await updateEmail(data.email, userId as string);
     if (res.success) {
       toast({
@@ -44,12 +48,14 @@ export default function UpdateEmailCard({ userId }: UpdateEmailCardProps) {
         description: "Your email has been updated successfully.",
       });
       reset();
+      setIsSubmitting(false);
     } else {
       toast({
         title: "Something went wrong",
         description: res.error,
         variant: "destructive",
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -78,7 +84,8 @@ export default function UpdateEmailCard({ userId }: UpdateEmailCardProps) {
             )}
           </div>
           <Button className="ml-auto" type="submit">
-            Update Email
+            {isSubmitting && <Loader2 className="animate-spin mr-2" />}
+            {isSubmitting ? "Updating" : "Update Email"}
           </Button>
         </form>
       </CardContent>
