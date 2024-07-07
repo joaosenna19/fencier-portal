@@ -15,10 +15,11 @@ import {
 } from "@/functions/formattingFunctions";
 import EditLeadForm from "@/components/EditLeadForm";
 import LeadsDetail from "@/components/LeadsDetail";
+import Link from "next/link";
 
 type LeadRowProps = {
   lead: Lead;
-  onDelete: (id: string) => void;
+
   onEdit: (
     id: string,
     status: "PENDING" | "ACCEPTED" | "REJECTED",
@@ -51,7 +52,7 @@ export default function LeadRow(props: LeadRowProps) {
     REJECTED: " text-red-600",
   };
 
-  const { lead, onDelete, onEdit } = props;
+  const { lead, onEdit } = props;
 
   return (
     <TableRow key={lead.id}>
@@ -99,9 +100,11 @@ export default function LeadRow(props: LeadRowProps) {
         </Popover>
       </TableCell>
       <TableCell>
-        <Button variant="destructive" onClick={() => onDelete(lead.id)}>
-          <Trash />
-        </Button>
+        <Link href={`/dashboard/lead?deleteLead=true&id=${lead.id}`}>
+          <Button variant="destructive">
+            <Trash />
+          </Button>
+        </Link>
       </TableCell>
     </TableRow>
   );

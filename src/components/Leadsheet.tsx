@@ -18,17 +18,29 @@ import { useEffect, useState } from "react";
 import { Lead } from "@/lib/types";
 import LeadRow from "@/components/LeadRow";
 import { useToast } from "@/components/ui/use-toast";
-import { fetchLeads, deleteLead, editLead } from "@/services/leadsService";
+import { fetchLeads, editLead } from "@/services/leadsService";
+import { useSearchParams } from "next/navigation";
 
 export default function Leadsheet() {
   const [data, setData] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const { toast } = useToast();
+  const params = useSearchParams();
 
   useEffect(() => {
     fetchLeads(setData, setLoading);
   }, []);
+
+  useEffect(() => {
+    const fetchAndSetMaterials = async () => {
+      if (!params.get("deleteLead")) {
+        setLoading(true);
+        await fetchLeads(setData, setLoading);
+      }
+    };
+    fetchAndSetMaterials();
+  }, [params]);
 
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value);
@@ -49,9 +61,12 @@ export default function Leadsheet() {
           <div className="grid gap-4">
             <div className="grid gap-1.5">
               <Label htmlFor="filter">Filter by status</Label>
-              <Select onValueChange={handleStatusFilterChange}>
+              <Select
+                value={statusFilter}
+                onValueChange={handleStatusFilterChange}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select status..." />
+                  <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All</SelectItem>
@@ -87,7 +102,6 @@ export default function Leadsheet() {
                 <LeadRow
                   key={lead.id}
                   lead={lead}
-                  onDelete={(id: string) => deleteLead(id, setData, toast)}
                   onEdit={(
                     id: string,
                     status: "PENDING" | "ACCEPTED" | "REJECTED",

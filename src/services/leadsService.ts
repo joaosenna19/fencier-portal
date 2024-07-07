@@ -21,26 +21,21 @@ export const fetchLeads = async (
   }
 };
 
-export const deleteLead = async (
-  id: string,
-  setData: React.Dispatch<React.SetStateAction<Lead[]>>,
-  toast: ReturnType<typeof useToast>["toast"]
-) => {
+export const deleteLead = async (id: string) => {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_FENCIER_API_URL}/quote/?id=${id}`, {
-      method: "DELETE",
-    });
-    setData((prevData) => prevData.filter((lead) => lead.id !== id));
-    toast({
-      title: "Lead deleted",
-      description: "The lead has been successfully deleted.",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/quote/?id=${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      return { success: false, message: "Failed to delete lead" };
+    }
+    const data = await res.json();
+    return { success: true, message: "Lead deleted successfully" };
   } catch (error) {
-    toast({
-      title: "Error",
-      description: "An error occurred while deleting the lead.",
-      variant: "destructive",
-    });
+    return { success: false, message: "Something went wrong" };
   }
 };
 
