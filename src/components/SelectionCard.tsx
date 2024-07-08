@@ -43,9 +43,6 @@ const SelectionCard: React.FC<SelectionCardProps> = ({
           <Image src={imageUrl} alt={name} width="100" height="50" />
         </CardContent>
         <CardFooter className="flex justify-center space-x-2 p-0">
-          <Button className="bg-blue-500 hover:bg-blue-600 m-1 p-2 border rounded-3x1">
-            <PencilLine size={14} />
-          </Button>
           <Link
             href={`/dashboard/product?deleteMaterials=true&id=${id}&param=${param}`}
           >

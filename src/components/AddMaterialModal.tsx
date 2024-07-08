@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { handleSubmitForm } from "@/services/submitHandler";
+import { handleAddMaterialSubmitForm } from "@/services/submitHandler";
 import MaterialInfo from "@/components/MaterialInfo";
 import StyleInfo from "@/components/StyleInfo";
 import { useToast } from "@/components/ui/use-toast";
@@ -76,7 +76,7 @@ export default function AddMaterialModal() {
 
   const onSubmit: SubmitHandler<MaterialFormSchema> = async (data) => {
     setIsLoading(true);
-    const result = await handleSubmitForm(data, reset, tenantId);
+    const result = await handleAddMaterialSubmitForm(data, reset, tenantId);
     setIsLoading(false);
     if (result.success) {
       toast({

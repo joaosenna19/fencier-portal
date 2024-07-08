@@ -4,6 +4,7 @@ import { Material } from "@/interfaces/material";
 import SelectionSection from "@/components/SelectionSection";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { fetchMaterials } from "@/services/fetchMaterial";
 
 export default function ProductForm() {
   const [materials, setMaterials] = useState<Material[]>([]);
@@ -50,7 +51,13 @@ export default function ProductForm() {
 
   useEffect(() => {
     const fetchAndSetMaterials = async () => {
-      if (!params.get("addMaterial") && !params.get("deleteMaterials")) {
+      if (
+        !params.get("addMaterial") &&
+        !params.get("deleteMaterials") &&
+        !params.get("addStyles") &&
+        !params.get("addColors") &&
+        !params.get("addHeights")
+      ) {
         setIsLoading(true);
         const data = await fetchMaterials();
         setMaterials(data);
@@ -125,10 +132,4 @@ export default function ProductForm() {
       </div>
     </section>
   );
-}
-
-export async function fetchMaterials() {
-  return await fetch(
-    `${process.env.NEXT_PUBLIC_FENCIER_API_URL}/material`
-  ).then((response) => response.json());
 }

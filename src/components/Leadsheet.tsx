@@ -33,13 +33,13 @@ export default function Leadsheet() {
   }, []);
 
   useEffect(() => {
-    const fetchAndSetMaterials = async () => {
+    const fetchAndSetLeads = async () => {
       if (!params.get("deleteLead")) {
         setLoading(true);
         await fetchLeads(setData, setLoading);
       }
     };
-    fetchAndSetMaterials();
+    fetchAndSetLeads();
   }, [params]);
 
   const handleStatusFilterChange = (value: string) => {
