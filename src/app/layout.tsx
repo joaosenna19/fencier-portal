@@ -5,6 +5,9 @@ import { AuthProvider } from "@/context/AuthContext";
 import AddMaterialModal from "@/components/AddMaterialModal";
 import DeleteMaterialModal from "@/components/DeleteMaterialModal";
 import DeleteLeadModal from "@/components/DeleteLeadModal";
+import AddStyleModal from "@/components/AddStyleModal";
+import AddColorModal from "@/components/AddColorModal";
+import AddHeightModal from "@/components/AddHeightModal";
 
 export const metadata: Metadata = {
   title: "Dashboard - Fencier",
@@ -23,6 +26,9 @@ export default function RootLayout({
             <AddMaterialModal />
             <DeleteMaterialModal />
             <DeleteLeadModal />
+            <AddStyleModal />
+            <AddColorModal />
+            <AddHeightModal />
             {children}
           </div>
         </AuthProvider>

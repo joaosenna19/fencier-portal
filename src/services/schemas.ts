@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const heightSchema = z.object({
+export const heightSchema = z.object({
   feet: z.number().min(1, "Height must be at least 1 foot"),
   pricePer8Ft: z.number().min(0, "Price must be a positive number"),
   pricePer4Ft: z.number().min(0, "Price must be a positive number"),
@@ -9,7 +9,7 @@ const heightSchema = z.object({
   gateFeet: z.number().min(0, "Gate height must be a positive number"),
 });
 
-const colorSchema = z.object({
+export const colorSchema = z.object({
   name: z.string().min(1, "Color name is required"),
   colorImage: z.instanceof(File).refine((file) => file.size > 0, {
     message: "Image file is required",
@@ -17,7 +17,7 @@ const colorSchema = z.object({
   heights: z.array(heightSchema).min(1, "At least one height is required"),
 });
 
-const styleSchema = z.object({
+export const styleSchema = z.object({
   name: z.string().min(1, "Style name is required"),
   styleImage: z.instanceof(File).refine((file) => file.size > 0, {
     message: "Image file is required",
