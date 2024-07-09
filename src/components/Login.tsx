@@ -13,9 +13,12 @@ import { useAuth } from "@/context/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const loginSchema = z.object({
     email: z.string().email({ message: "You must enter a valid email." }),
@@ -32,8 +35,10 @@ export default function LoginPage() {
     });
 
   const onSubmit: SubmitHandler<loginSchema> = async (data) => {
+    setIsLoading(true);
     clearErrors();
     await login(data.email, data.password);
+    setIsLoading(false);
   };
 
   return (
@@ -72,11 +77,14 @@ export default function LoginPage() {
               </p>
             )}
           </div>
+
           <Button
             className="w-full bg-blue-500 hover:bg-blue-600 mt-2"
             type="submit"
+            disabled={isLoading}
           >
-            Login
+            {isLoading && <Loader2 className="animate-spin" size={20} />}
+            {isLoading ? "Loading..." : "Login"}
           </Button>
         </form>
       </CardContent>
