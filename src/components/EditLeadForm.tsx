@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/select";
 
 type EditLeadFormProps = {
-  initialStatus: "PENDING" | "ACCEPTED" | "REJECTED";
+  initialStatus: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED";
   initialFinalPrice: number;
   onSubmit: (
-    status: "PENDING" | "ACCEPTED" | "REJECTED",
+    status: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED",
     finalPrice: number
   ) => void;
 };
@@ -25,7 +25,7 @@ const EditLeadForm: React.FC<EditLeadFormProps> = ({
   initialFinalPrice,
   onSubmit,
 }) => {
-  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "REJECTED">(
+  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED">(
     initialStatus
   );
   const [finalPrice, setFinalPrice] = useState<number>(initialFinalPrice);
@@ -46,7 +46,7 @@ const EditLeadForm: React.FC<EditLeadFormProps> = ({
           <Select
             value={status}
             onValueChange={(value) =>
-              setStatus(value as "PENDING" | "ACCEPTED" | "REJECTED")
+              setStatus(value as "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED")
             }
           >
             <SelectTrigger>
@@ -56,6 +56,8 @@ const EditLeadForm: React.FC<EditLeadFormProps> = ({
               <SelectItem value="PENDING">Pending</SelectItem>
               <SelectItem value="ACCEPTED">Accepted</SelectItem>
               <SelectItem value="REJECTED">Rejected</SelectItem>
+              <SelectItem value="ARCHIVED">Archived</SelectItem>
+              <SelectItem value="CONTACTED">Contacted</SelectItem>
             </SelectContent>
           </Select>
         </div>

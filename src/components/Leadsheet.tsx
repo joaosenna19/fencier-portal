@@ -74,6 +74,8 @@ export default function Leadsheet() {
                   <SelectItem value="PENDING">Pending</SelectItem>
                   <SelectItem value="ACCEPTED">Accepted</SelectItem>
                   <SelectItem value="REJECTED">Rejected</SelectItem>
+                  <SelectItem value="ARCHIVED">Archived</SelectItem>
+                  <SelectItem value="CONTACTED">Contacted</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -106,7 +108,7 @@ export default function Leadsheet() {
                   lead={lead}
                   onEdit={(
                     id: string,
-                    status: "PENDING" | "ACCEPTED" | "REJECTED",
+                    status: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED",
                     finalPrice: number
                   ) =>
                     editLead(id, status, finalPrice, toast, () =>

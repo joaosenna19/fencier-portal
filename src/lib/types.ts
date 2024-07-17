@@ -49,7 +49,7 @@ export interface Lead {
   id: string;
   customerInfo: CustomerInfo;
   finalPrice: number;
-  status: "PENDING" | "ACCEPTED" | "REJECTED";
+  status: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED";
   material: Material;
   style: Style;
   color: Color;

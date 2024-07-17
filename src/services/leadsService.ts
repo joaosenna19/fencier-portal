@@ -41,7 +41,7 @@ export const deleteLead = async (id: string) => {
 
 export const editLead = async (
   id: string,
-  status: "PENDING" | "ACCEPTED" | "REJECTED",
+  status: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED",
   finalPrice: number,
   toast: ReturnType<typeof useToast>["toast"],
   fetchLeads: () => void

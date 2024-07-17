@@ -1,7 +1,15 @@
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Smile, Frown, Clock9, PencilLine, Trash } from "lucide-react";
+import {
+  Smile,
+  Frown,
+  Clock9,
+  PencilLine,
+  Trash,
+  Archive,
+  Phone,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -22,19 +30,19 @@ type LeadRowProps = {
 
   onEdit: (
     id: string,
-    status: "PENDING" | "ACCEPTED" | "REJECTED",
+    status: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED",
     finalPrice: number
   ) => Promise<void>;
 };
 
 export default function LeadRow(props: LeadRowProps) {
-  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "REJECTED">(
-    props.lead.status
-  );
+  const [status, setStatus] = useState<
+    "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED"
+  >(props.lead.status);
   const [finalPrice, setFinalPrice] = useState<number>(props.lead.finalPrice);
 
   const handleEdit = async (
-    status: "PENDING" | "ACCEPTED" | "REJECTED",
+    status: "PENDING" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | "CONTACTED",
     finalPrice: number
   ) => {
     await onEdit(lead.id, status, finalPrice);
@@ -44,21 +52,30 @@ export default function LeadRow(props: LeadRowProps) {
     PENDING: <Clock9 className="w-4 h-4 inline-block mr-1" />,
     ACCEPTED: <Smile className="w-4 h-4 inline-block mr-1" />,
     REJECTED: <Frown className="w-4 h-4 inline-block mr-1" />,
+    ARCHIVED: <Archive className="w-4 h-4 inline-block mr-1" />,
+    CONTACTED: <Phone className="w-4 h-4 inline-block mr-1" />,
   };
 
   const statusColors: { [key: string]: string } = {
     PENDING: "text-yellow-600",
     ACCEPTED: " text-green-600",
     REJECTED: " text-red-600",
+    ARCHIVED: " text-gray-600",
+    CONTACTED: " text-green-400",
   };
 
   const { lead, onEdit } = props;
   const date = new Date(lead.createdAt);
 
-
   return (
     <TableRow key={lead.id}>
-      <TableCell>{date.toLocaleString('en-GB', {day: '2-digit', month: '2-digit', year: '2-digit'})}</TableCell>
+      <TableCell>
+        {date.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        })}
+      </TableCell>
       <TableCell>
         {lead.customerInfo.firstName} {lead.customerInfo.lastName}
       </TableCell>
