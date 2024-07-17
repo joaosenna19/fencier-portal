@@ -53,9 +53,12 @@ export default function LeadRow(props: LeadRowProps) {
   };
 
   const { lead, onEdit } = props;
+  const date = new Date(lead.createdAt);
+
 
   return (
     <TableRow key={lead.id}>
+      <TableCell>{date.toLocaleString('en-GB', {day: '2-digit', month: '2-digit', year: '2-digit'})}</TableCell>
       <TableCell>
         {lead.customerInfo.firstName} {lead.customerInfo.lastName}
       </TableCell>
