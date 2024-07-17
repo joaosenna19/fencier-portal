@@ -29,7 +29,8 @@ export default function Leadsheet() {
   const params = useSearchParams();
 
   useEffect(() => {
-    fetchLeads(setData, setLoading);
+   fetchLeads(setData, setLoading);
+
   }, []);
 
   useEffect(() => {
@@ -86,6 +87,7 @@ export default function Leadsheet() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="text-center">Date</TableHead>
                 <TableHead className="text-center">Name</TableHead>
                 <TableHead className="text-center">Phone Number</TableHead>
                 <TableHead className="text-center">Email</TableHead>
